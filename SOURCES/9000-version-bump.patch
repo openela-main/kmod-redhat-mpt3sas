@@ -1,0 +1,22 @@
+Index: src/drivers/scsi/mpt3sas/mpt3sas_base.h
+===================================================================
+--- src.orig/drivers/scsi/mpt3sas/mpt3sas_base.h	2021-01-04 05:31:41.522935379 +0100
++++ src/drivers/scsi/mpt3sas/mpt3sas_base.h	2021-01-04 05:32:44.359382013 +0100
+@@ -76,7 +76,7 @@
+ #define MPT3SAS_DRIVER_NAME		"mpt3sas"
+ #define MPT3SAS_AUTHOR "Avago Technologies <MPT-FusionLinux.pdl@avagotech.com>"
+ #define MPT3SAS_DESCRIPTION	"LSI MPT Fusion SAS 3.0 Device Driver"
+-#define MPT3SAS_DRIVER_VERSION		"35.101.00.00"
++#define MPT3SAS_DRIVER_VERSION		"35.101.00.00_dup8.3"
+ #define MPT3SAS_MAJOR_VERSION		35
+ #define MPT3SAS_MINOR_VERSION		101
+ #define MPT3SAS_BUILD_VERSION		0
+@@ -84,7 +84,7 @@
+ 
+ #define MPT2SAS_DRIVER_NAME		"mpt2sas"
+ #define MPT2SAS_DESCRIPTION	"LSI MPT Fusion SAS 2.0 Device Driver"
+-#define MPT2SAS_DRIVER_VERSION		"20.102.00.00"
++#define MPT2SAS_DRIVER_VERSION		"20.102.00.00_dup8.3"
+ #define MPT2SAS_MAJOR_VERSION		20
+ #define MPT2SAS_MINOR_VERSION		102
+ #define MPT2SAS_BUILD_VERSION		0

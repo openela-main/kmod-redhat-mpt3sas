@@ -1,0 +1,136 @@
+From 99de4d2f928d9ee96162ec22a59c764aeb065ed3 Mon Sep 17 00:00:00 2001
+From: Tomas Henzl <thenzl@redhat.com>
+Date: Fri, 9 Oct 2020 14:06:32 -0400
+Subject: [PATCH 14/33] [scsi] scsi: mpt3sas: Remove pci-dma-compat wrapper API
+
+Message-id: <20201009140636.7976-15-thenzl@redhat.com>
+Patchwork-id: 330370
+Patchwork-instance: patchwork
+O-Subject: [RHEL8.4 e-stor PATCH 14/18] scsi: mpt3sas: Remove pci-dma-compat wrapper API
+Bugzilla: 1851440
+RH-Acked-by: Ewan Milne <emilne@redhat.com>
+RH-Acked-by: Jarod Wilson <jarod@redhat.com>
+RH-Acked-by: Maurizio Lombardi <mlombard@redhat.com>
+RH-Acked-by: Tony Camuso <tcamuso@redhat.com>
+
+The legacy API wrappers in include/linux/pci-dma-compat.h should go away as
+they create unnecessary midlayering for include/linux/dma-mapping.h API.
+Instead use dma-mapping.h API directly.
+
+The patch has been generated with the coccinelle script below.  Compile
+tested.
+
+@@@@
+- PCI_DMA_BIDIRECTIONAL
++ DMA_BIDIRECTIONAL
+
+@@@@
+- PCI_DMA_TODEVICE
++ DMA_TO_DEVICE
+
+@@@@
+- PCI_DMA_FROMDEVICE
++ DMA_FROM_DEVICE
+
+@@@@
+- PCI_DMA_NONE
++ DMA_NONE
+
+@@ expression E1, E2, E3; @@
+- pci_alloc_consistent(E1, E2, E3)
++ dma_alloc_coherent(&E1->dev, E2, E3, GFP_)
+
+@@ expression E1, E2, E3; @@
+- pci_zalloc_consistent(E1, E2, E3)
++ dma_alloc_coherent(&E1->dev, E2, E3, GFP_)
+
+@@ expression E1, E2, E3, E4; @@
+- pci_free_consistent(E1, E2, E3, E4)
++ dma_free_coherent(&E1->dev, E2, E3, E4)
+
+@@ expression E1, E2, E3, E4; @@
+- pci_map_single(E1, E2, E3, E4)
++ dma_map_single(&E1->dev, E2, E3, E4)
+
+@@ expression E1, E2, E3, E4; @@
+- pci_unmap_single(E1, E2, E3, E4)
++ dma_unmap_single(&E1->dev, E2, E3, E4)
+
+@@ expression E1, E2, E3, E4, E5; @@
+- pci_map_page(E1, E2, E3, E4, E5)
++ dma_map_page(&E1->dev, E2, E3, E4, E5)
+
+@@ expression E1, E2, E3, E4; @@
+- pci_unmap_page(E1, E2, E3, E4)
++ dma_unmap_page(&E1->dev, E2, E3, E4)
+
+@@ expression E1, E2, E3, E4; @@
+- pci_map_sg(E1, E2, E3, E4)
++ dma_map_sg(&E1->dev, E2, E3, E4)
+
+@@ expression E1, E2, E3, E4; @@
+- pci_unmap_sg(E1, E2, E3, E4)
++ dma_unmap_sg(&E1->dev, E2, E3, E4)
+
+@@ expression E1, E2, E3, E4; @@
+- pci_dma_sync_single_for_cpu(E1, E2, E3, E4)
++ dma_sync_single_for_cpu(&E1->dev, E2, E3, E4)
+
+@@ expression E1, E2, E3, E4; @@
+- pci_dma_sync_single_for_device(E1, E2, E3, E4)
++ dma_sync_single_for_device(&E1->dev, E2, E3, E4)
+
+@@ expression E1, E2, E3, E4; @@
+- pci_dma_sync_sg_for_cpu(E1, E2, E3, E4)
++ dma_sync_sg_for_cpu(&E1->dev, E2, E3, E4)
+
+@@ expression E1, E2, E3, E4; @@
+- pci_dma_sync_sg_for_device(E1, E2, E3, E4)
++ dma_sync_sg_for_device(&E1->dev, E2, E3, E4)
+
+@@ expression E1, E2; @@
+- pci_dma_mapping_error(E1, E2)
++ dma_mapping_error(&E1->dev, E2)
+
+@@ expression E1, E2; @@
+- pci_set_consistent_dma_mask(E1, E2)
++ dma_set_coherent_mask(&E1->dev, E2)
+
+@@ expression E1, E2; @@
+- pci_set_dma_mask(E1, E2)
++ dma_set_mask(&E1->dev, E2)
+
+Link: https://lore.kernel.org/r/e825ac7108092cc8fa8d462dc702098ef10fc6a2.1596045683.git.usuraj35@gmail.com
+Signed-off-by: Suraj Upadhyay <usuraj35@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+(cherry picked from commit a5a20c4a294ed3ecfe5f22f1232ce6ad2430a7d9)
+Signed-off-by: Tomas Henzl <thenzl@redhat.com>
+Signed-off-by: Jan Stancek <jstancek@redhat.com>
+---
+ drivers/scsi/mpt3sas/mpt3sas_ctl.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_ctl.c b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
+index 194ac9d03bc9..5c32dbb8b2f0 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_ctl.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
+@@ -3386,12 +3386,10 @@ host_trace_buffer_enable_store(struct device *cdev,
+ 			    &&
+ 			    (ioc->diag_buffer_status[MPI2_DIAG_BUF_TYPE_TRACE] &
+ 			    MPT3_DIAG_BUFFER_IS_APP_OWNED)) {
+-				pci_free_consistent(ioc->pdev,
+-				    ioc->diag_buffer_sz[
+-				    MPI2_DIAG_BUF_TYPE_TRACE],
+-				    ioc->diag_buffer[MPI2_DIAG_BUF_TYPE_TRACE],
+-				    ioc->diag_buffer_dma[
+-				    MPI2_DIAG_BUF_TYPE_TRACE]);
++				dma_free_coherent(&ioc->pdev->dev,
++						  ioc->diag_buffer_sz[MPI2_DIAG_BUF_TYPE_TRACE],
++						  ioc->diag_buffer[MPI2_DIAG_BUF_TYPE_TRACE],
++						  ioc->diag_buffer_dma[MPI2_DIAG_BUF_TYPE_TRACE]);
+ 				ioc->diag_buffer[MPI2_DIAG_BUF_TYPE_TRACE] =
+ 				    NULL;
+ 			}
+-- 
+2.13.6
+

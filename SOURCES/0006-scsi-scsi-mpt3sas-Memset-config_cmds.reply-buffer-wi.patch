@@ -1,0 +1,50 @@
+From e72e2a468d703f2cd4be3d05a0562cf6fe683952 Mon Sep 17 00:00:00 2001
+From: Tomas Henzl <thenzl@redhat.com>
+Date: Fri, 9 Oct 2020 14:06:24 -0400
+Subject: [PATCH 06/33] [scsi] scsi: mpt3sas: Memset config_cmds.reply buffer
+ with zeros
+
+Message-id: <20201009140636.7976-7-thenzl@redhat.com>
+Patchwork-id: 330359
+Patchwork-instance: patchwork
+O-Subject: [RHEL8.4 e-stor PATCH 06/18] scsi: mpt3sas: Memset config_cmds.reply buffer with zeros
+Bugzilla: 1851440
+RH-Acked-by: Ewan Milne <emilne@redhat.com>
+RH-Acked-by: Jarod Wilson <jarod@redhat.com>
+RH-Acked-by: Maurizio Lombardi <mlombard@redhat.com>
+RH-Acked-by: Tony Camuso <tcamuso@redhat.com>
+
+Currently config_cmds.reply buffer is not memset to zero before posting
+config page request message.  In some cases, for the current config
+request, the previous config reply is getting processed and we will observe
+PageType mismatch between request to reply buffer. It will be difficult to
+debug this type of issue and it confuses by thinking that HBA Firmware
+itself posted the wrong config reply.  So it is better to memset the
+config_cmds.reply buffer with zeros before issuing the config request.
+
+Link: https://lore.kernel.org/r/1596096229-3341-2-git-send-email-suganath-prabu.subramani@broadcom.com
+Signed-off-by: Suganath Prabu S <suganath-prabu.subramani@broadcom.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+(cherry picked from commit f09219e48b401c961f9d2f8f97a0c0b55b7894e1)
+Signed-off-by: Tomas Henzl <thenzl@redhat.com>
+Signed-off-by: Jan Stancek <jstancek@redhat.com>
+---
+ drivers/scsi/mpt3sas/mpt3sas_config.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_config.c b/drivers/scsi/mpt3sas/mpt3sas_config.c
+index 11026e0ef3d0..4a0ddc7c95e4 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_config.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_config.c
+@@ -371,7 +371,7 @@ _config_request(struct MPT3SAS_ADAPTER *ioc, Mpi2ConfigRequest_t
+ 	}
+ 
+ 	r = 0;
+-	memset(mpi_reply, 0, sizeof(Mpi2ConfigReply_t));
++	memset(ioc->config_cmds.reply, 0, sizeof(Mpi2ConfigReply_t));
+ 	ioc->config_cmds.status = MPT3_CMD_PENDING;
+ 	config_request = mpt3sas_base_get_msg_frame(ioc, smid);
+ 	ioc->config_cmds.smid = smid;
+-- 
+2.13.6
+

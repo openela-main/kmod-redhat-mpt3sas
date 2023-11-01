@@ -1,0 +1,67 @@
+From 363658dad96139188f639c72def9119c643717f1 Mon Sep 17 00:00:00 2001
+From: Tomas Henzl <thenzl@redhat.com>
+Date: Fri, 9 Oct 2020 14:06:35 -0400
+Subject: [PATCH 17/33] [scsi] scsi: mpt3sas: Fix sync irqs
+
+Message-id: <20201009140636.7976-18-thenzl@redhat.com>
+Patchwork-id: 330373
+Patchwork-instance: patchwork
+O-Subject: [RHEL8.4 e-stor PATCH 17/18] scsi: mpt3sas: Fix sync irqs
+Bugzilla: 1851440
+RH-Acked-by: Ewan Milne <emilne@redhat.com>
+RH-Acked-by: Jarod Wilson <jarod@redhat.com>
+RH-Acked-by: Maurizio Lombardi <mlombard@redhat.com>
+RH-Acked-by: Tony Camuso <tcamuso@redhat.com>
+
+_base_process_reply_queue() called from _base_interrupt() may schedule a
+new irq poll. Fix this by calling synchronize_irq() first.
+
+Also ensure that enable_irq() is called only when necessary to avoid
+"Unbalanced enable for IRQ..." errors.
+
+Link: https://lore.kernel.org/r/20200910142126.8147-1-thenzl@redhat.com
+Fixes: 320e77acb327 ("scsi: mpt3sas: Irq poll to avoid CPU hard lockups")
+Acked-by: Sreekanth Reddy <sreekanth.reddy@broadcom.com>
+Signed-off-by: Tomas Henzl <thenzl@redhat.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+(cherry picked from commit 45181eab8ba79ed7a41b549f00500c0093828521)
+Signed-off-by: Jan Stancek <jstancek@redhat.com>
+---
+ drivers/scsi/mpt3sas/mpt3sas_base.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.c b/drivers/scsi/mpt3sas/mpt3sas_base.c
+index 24dd90a72a80..e08ad13714d4 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_base.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
+@@ -1809,18 +1809,22 @@ mpt3sas_base_sync_reply_irqs(struct MPT3SAS_ADAPTER *ioc, u8 poll)
+ 		/* TMs are on msix_index == 0 */
+ 		if (reply_q->msix_index == 0)
+ 			continue;
++		synchronize_irq(pci_irq_vector(ioc->pdev, reply_q->msix_index));
+ 		if (reply_q->irq_poll_scheduled) {
+ 			/* Calling irq_poll_disable will wait for any pending
+ 			 * callbacks to have completed.
+ 			 */
+ 			irq_poll_disable(&reply_q->irqpoll);
+ 			irq_poll_enable(&reply_q->irqpoll);
+-			reply_q->irq_poll_scheduled = false;
+-			reply_q->irq_line_enable = true;
+-			enable_irq(reply_q->os_irq);
+-			continue;
++			/* check how the scheduled poll has ended,
++			 * clean up only if necessary
++			 */
++			if (reply_q->irq_poll_scheduled) {
++				reply_q->irq_poll_scheduled = false;
++				reply_q->irq_line_enable = true;
++				enable_irq(reply_q->os_irq);
++			}
+ 		}
+-		synchronize_irq(pci_irq_vector(ioc->pdev, reply_q->msix_index));
+ 	}
+ 	if (poll)
+ 		_base_process_reply_queue(reply_q);
+-- 
+2.13.6
+

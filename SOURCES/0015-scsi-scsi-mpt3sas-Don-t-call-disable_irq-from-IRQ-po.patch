@@ -1,0 +1,45 @@
+From c92c9fc8098777df0c9f4180507f49fbf743aae2 Mon Sep 17 00:00:00 2001
+From: Tomas Henzl <thenzl@redhat.com>
+Date: Fri, 9 Oct 2020 14:06:33 -0400
+Subject: [PATCH 15/33] [scsi] scsi: mpt3sas: Don't call disable_irq from IRQ
+ poll handler
+
+Message-id: <20201009140636.7976-16-thenzl@redhat.com>
+Patchwork-id: 330372
+Patchwork-instance: patchwork
+O-Subject: [RHEL8.4 e-stor PATCH 15/18] scsi: mpt3sas: Don't call disable_irq from IRQ poll handler
+Bugzilla: 1851440
+RH-Acked-by: Ewan Milne <emilne@redhat.com>
+RH-Acked-by: Jarod Wilson <jarod@redhat.com>
+RH-Acked-by: Maurizio Lombardi <mlombard@redhat.com>
+RH-Acked-by: Tony Camuso <tcamuso@redhat.com>
+
+disable_irq() might sleep, replace it with disable_irq_nosync(). For
+synchronisation 'irq_poll_scheduled' is sufficient
+
+Fixes: 320e77acb3 scsi: mpt3sas: Irq poll to avoid CPU hard lockups
+Link: https://lore.kernel.org/r/20200901145026.12174-1-thenzl@redhat.com
+Signed-off-by: Tomas Henzl <thenzl@redhat.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+(cherry picked from commit b614d55b970d08bcac5b0bc15a5526181b3e4459)
+Signed-off-by: Jan Stancek <jstancek@redhat.com>
+---
+ drivers/scsi/mpt3sas/mpt3sas_base.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.c b/drivers/scsi/mpt3sas/mpt3sas_base.c
+index 4aae441211bd..24dd90a72a80 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_base.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
+@@ -1731,7 +1731,7 @@ _base_irqpoll(struct irq_poll *irqpoll, int budget)
+ 	reply_q = container_of(irqpoll, struct adapter_reply_queue,
+ 			irqpoll);
+ 	if (reply_q->irq_line_enable) {
+-		disable_irq(reply_q->os_irq);
++		disable_irq_nosync(reply_q->os_irq);
+ 		reply_q->irq_line_enable = false;
+ 	}
+ 	num_entries = _base_process_reply_queue(reply_q);
+-- 
+2.13.6
+

@@ -1,0 +1,45 @@
+From 3a452f745463a7f4857f809916bdc16e9cecaa56 Mon Sep 17 00:00:00 2001
+From: Tomas Henzl <thenzl@redhat.com>
+Date: Fri, 13 Nov 2020 18:42:58 -0500
+Subject: [PATCH 33/33] [scsi] scsi: mpt3sas: Bump driver version to
+ 35.101.00.00
+
+Message-id: <20201113184258.11169-15-thenzl@redhat.com>
+Patchwork-id: 339469
+Patchwork-instance: patchwork
+O-Subject: [RHEL8.4 e-stor PATCH 14/14] scsi: mpt3sas: Bump driver version to 35.101.00.00
+Bugzilla: 1888543
+RH-Acked-by: Ewan Milne <emilne@redhat.com>
+RH-Acked-by: Tony Camuso <tcamuso@redhat.com>
+
+Bump mpt3sas driver version to 35.101.00.00
+
+Link: https://lore.kernel.org/r/20201027130847.9962-15-sreekanth.reddy@broadcom.com
+Signed-off-by: Sreekanth Reddy <sreekanth.reddy@broadcom.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+(cherry picked from commit 2030745877bdd2ecbeb43ff1846242d004482587)
+Signed-off-by: Tomas Henzl <thenzl@redhat.com>
+Signed-off-by: Jan Stancek <jstancek@redhat.com>
+---
+ drivers/scsi/mpt3sas/mpt3sas_base.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.h b/drivers/scsi/mpt3sas/mpt3sas_base.h
+index badd8230cce2..7dab579dbc20 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_base.h
++++ b/drivers/scsi/mpt3sas/mpt3sas_base.h
+@@ -76,9 +76,9 @@
+ #define MPT3SAS_DRIVER_NAME		"mpt3sas"
+ #define MPT3SAS_AUTHOR "Avago Technologies <MPT-FusionLinux.pdl@avagotech.com>"
+ #define MPT3SAS_DESCRIPTION	"LSI MPT Fusion SAS 3.0 Device Driver"
+-#define MPT3SAS_DRIVER_VERSION		"35.100.00.00"
++#define MPT3SAS_DRIVER_VERSION		"35.101.00.00"
+ #define MPT3SAS_MAJOR_VERSION		35
+-#define MPT3SAS_MINOR_VERSION		100
++#define MPT3SAS_MINOR_VERSION		101
+ #define MPT3SAS_BUILD_VERSION		0
+ #define MPT3SAS_RELEASE_VERSION	00
+ 
+-- 
+2.13.6
+
