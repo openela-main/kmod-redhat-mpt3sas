@@ -1,0 +1,57 @@
+From 0d117a6fdcb2fb322fd92fff364e5645863b2cbe Mon Sep 17 00:00:00 2001
+From: Tomas Henzl <thenzl@redhat.com>
+Date: Fri, 9 Oct 2020 14:06:19 -0400
+Subject: [PATCH 01/33] [scsi] scsi: mpt3sas: Fix spelling mistake
+
+Message-id: <20201009140636.7976-2-thenzl@redhat.com>
+Patchwork-id: 330364
+Patchwork-instance: patchwork
+O-Subject: [RHEL8.4 e-stor PATCH 01/18] scsi: mpt3sas: Fix spelling mistake
+Bugzilla: 1851440
+RH-Acked-by: Ewan Milne <emilne@redhat.com>
+RH-Acked-by: Jarod Wilson <jarod@redhat.com>
+RH-Acked-by: Maurizio Lombardi <mlombard@redhat.com>
+RH-Acked-by: Tony Camuso <tcamuso@redhat.com>
+
+Fix typo: "tigger" --> "trigger"
+
+Link: https://lore.kernel.org/r/20200609161313.32098-1-f.suligoi@asem.it
+Signed-off-by: Flavio Suligoi <f.suligoi@asem.it>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+(cherry picked from commit 896c9b4907c59c3f24f27ae7f2a57bda0f3476f3)
+Signed-off-by: Tomas Henzl <thenzl@redhat.com>
+Signed-off-by: Jan Stancek <jstancek@redhat.com>
+---
+ drivers/scsi/mpt3sas/mpt3sas_base.h         | 2 +-
+ drivers/scsi/mpt3sas/mpt3sas_trigger_diag.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.h b/drivers/scsi/mpt3sas/mpt3sas_base.h
+index 4fca3939c034..4ff876c31272 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_base.h
++++ b/drivers/scsi/mpt3sas/mpt3sas_base.h
+@@ -1770,7 +1770,7 @@ void mpt3sas_send_trigger_data_event(struct MPT3SAS_ADAPTER *ioc,
+ void mpt3sas_process_trigger_data(struct MPT3SAS_ADAPTER *ioc,
+ 	struct SL_WH_TRIGGERS_EVENT_DATA_T *event_data);
+ void mpt3sas_trigger_master(struct MPT3SAS_ADAPTER *ioc,
+-	u32 tigger_bitmask);
++	u32 trigger_bitmask);
+ void mpt3sas_trigger_event(struct MPT3SAS_ADAPTER *ioc, u16 event,
+ 	u16 log_entry_qualifier);
+ void mpt3sas_trigger_scsi(struct MPT3SAS_ADAPTER *ioc, u8 sense_key,
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_trigger_diag.h b/drivers/scsi/mpt3sas/mpt3sas_trigger_diag.h
+index 6586a463bea9..405eada2669d 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_trigger_diag.h
++++ b/drivers/scsi/mpt3sas/mpt3sas_trigger_diag.h
+@@ -69,7 +69,7 @@
+ #define MASTER_TRIGGER_TASK_MANAGMENT   (0x00000004)
+ #define MASTER_TRIGGER_DEVICE_REMOVAL   (0x00000008)
+ 
+-/* fake firmware event for tigger */
++/* fake firmware event for trigger */
+ #define MPI3_EVENT_DIAGNOSTIC_TRIGGER_FIRED	(0x6E)
+ 
+ /**
+-- 
+2.13.6
+

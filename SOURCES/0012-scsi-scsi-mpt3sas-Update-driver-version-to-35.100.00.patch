@@ -1,0 +1,46 @@
+From 57a999fa21a0696a61b23dcfdc826a7062b75861 Mon Sep 17 00:00:00 2001
+From: Tomas Henzl <thenzl@redhat.com>
+Date: Fri, 9 Oct 2020 14:06:30 -0400
+Subject: [PATCH 12/33] [scsi] scsi: mpt3sas: Update driver version to
+ 35.100.00.00
+
+Message-id: <20201009140636.7976-13-thenzl@redhat.com>
+Patchwork-id: 330367
+Patchwork-instance: patchwork
+O-Subject: [RHEL8.4 e-stor PATCH 12/18] scsi: mpt3sas: Update driver version to 35.100.00.00
+Bugzilla: 1851440
+RH-Acked-by: Ewan Milne <emilne@redhat.com>
+RH-Acked-by: Jarod Wilson <jarod@redhat.com>
+RH-Acked-by: Maurizio Lombardi <mlombard@redhat.com>
+RH-Acked-by: Tony Camuso <tcamuso@redhat.com>
+
+Updated driver version to 35.100.00.00
+
+Link: https://lore.kernel.org/r/1596096229-3341-8-git-send-email-suganath-prabu.subramani@broadcom.com
+Signed-off-by: Suganath Prabu S <suganath-prabu.subramani@broadcom.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+(cherry picked from commit 0491bdc7ee1ec212bdb2fac8ed375283922fd828)
+Signed-off-by: Tomas Henzl <thenzl@redhat.com>
+Signed-off-by: Jan Stancek <jstancek@redhat.com>
+---
+ drivers/scsi/mpt3sas/mpt3sas_base.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.h b/drivers/scsi/mpt3sas/mpt3sas_base.h
+index 87b50f59c2eb..bc8beb10f3fc 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_base.h
++++ b/drivers/scsi/mpt3sas/mpt3sas_base.h
+@@ -76,8 +76,8 @@
+ #define MPT3SAS_DRIVER_NAME		"mpt3sas"
+ #define MPT3SAS_AUTHOR "Avago Technologies <MPT-FusionLinux.pdl@avagotech.com>"
+ #define MPT3SAS_DESCRIPTION	"LSI MPT Fusion SAS 3.0 Device Driver"
+-#define MPT3SAS_DRIVER_VERSION		"34.100.00.00"
+-#define MPT3SAS_MAJOR_VERSION		34
++#define MPT3SAS_DRIVER_VERSION		"35.100.00.00"
++#define MPT3SAS_MAJOR_VERSION		35
+ #define MPT3SAS_MINOR_VERSION		100
+ #define MPT3SAS_BUILD_VERSION		0
+ #define MPT3SAS_RELEASE_VERSION	00
+-- 
+2.13.6
+

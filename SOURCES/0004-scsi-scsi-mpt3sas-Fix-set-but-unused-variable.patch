@@ -1,0 +1,59 @@
+From 5c4527400712fbbde9125b6c0dd25c030d274b1d Mon Sep 17 00:00:00 2001
+From: Tomas Henzl <thenzl@redhat.com>
+Date: Fri, 9 Oct 2020 14:06:22 -0400
+Subject: [PATCH 04/33] [scsi] scsi: mpt3sas: Fix set but unused variable
+
+Message-id: <20201009140636.7976-5-thenzl@redhat.com>
+Patchwork-id: 330366
+Patchwork-instance: patchwork
+O-Subject: [RHEL8.4 e-stor PATCH 04/18] scsi: mpt3sas: Fix set but unused variable
+Bugzilla: 1851440
+RH-Acked-by: Ewan Milne <emilne@redhat.com>
+RH-Acked-by: Jarod Wilson <jarod@redhat.com>
+RH-Acked-by: Maurizio Lombardi <mlombard@redhat.com>
+RH-Acked-by: Tony Camuso <tcamuso@redhat.com>
+
+In _config_request(), the variable issue_reset is set using the macro
+mpt3sas_check_cmd_timeout() but otherwise unused, causing a compiler
+warning when compiling with W=1. Avoid this warning by removing this
+variable, using the function mpt3sas_base_check_cmd_timeout() directly
+instead of the mpt3sas_check_cmd_timeout() macro.
+
+Link: https://lore.kernel.org/r/20200706123356.452135-1-damien.lemoal@wdc.com
+Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+(cherry picked from commit 2eab3eb043ad60184ec49dd2d387ce942a8f6d4d)
+Signed-off-by: Tomas Henzl <thenzl@redhat.com>
+Signed-off-by: Jan Stancek <jstancek@redhat.com>
+---
+ drivers/scsi/mpt3sas/mpt3sas_config.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_config.c b/drivers/scsi/mpt3sas/mpt3sas_config.c
+index 62ddf53ab3ae..11026e0ef3d0 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_config.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_config.c
+@@ -303,7 +303,6 @@ _config_request(struct MPT3SAS_ADAPTER *ioc, Mpi2ConfigRequest_t
+ 	u8 retry_count, issue_host_reset = 0;
+ 	struct config_request mem;
+ 	u32 ioc_status = UINT_MAX;
+-	u8 issue_reset = 0;
+ 
+ 	mutex_lock(&ioc->config_cmds.mutex);
+ 	if (ioc->config_cmds.status != MPT3_CMD_NOT_USED) {
+@@ -386,9 +385,9 @@ _config_request(struct MPT3SAS_ADAPTER *ioc, Mpi2ConfigRequest_t
+ 		if (!(ioc->logging_level & MPT_DEBUG_CONFIG))
+ 			_config_display_some_debug(ioc,
+ 			    smid, "config_request", NULL);
+-		mpt3sas_check_cmd_timeout(ioc,
+-		    ioc->config_cmds.status, mpi_request,
+-		    sizeof(Mpi2ConfigRequest_t)/4, issue_reset);
++		ioc_err(ioc, "%s: command timeout\n", __func__);
++		mpt3sas_base_check_cmd_timeout(ioc, ioc->config_cmds.status,
++				mpi_request, sizeof(Mpi2ConfigRequest_t) / 4);
+ 		retry_count++;
+ 		if (ioc->config_cmds.smid == smid)
+ 			mpt3sas_base_free_smid(ioc, smid);
+-- 
+2.13.6
+
